@@ -11,7 +11,6 @@
 - VcXrvのインストール (https://sourceforge.net/projects/vcxsrv/)
 - XLaunch実行
     - Extra settingsでNative openglを無効，Additional parameters for VcXsrvに"-ac"
-- msys2等でipconfigを実行してvEthernet (WSL) のIPアドレス把握
 - WSLからのアクセスに対するfirewallの無効化 (Powershell管理者権限で実行)
   ```
   Set-NetFirewallProfile -Name public -DisabledInterfaceAliases "vEthernet (WSL)"
