@@ -25,3 +25,25 @@ $ echo $(netsh.exe interface ip show addresses "vEthernet (WSL)" | grep "IP Addr
 $ export DISPLAY=172.29.48.1:0.0
 $ xeyes
 ```
+認証用設定
+```
+$ xauth generate $DISPLAY
+```
+
+
+## ssh越しのクリップボード連携
+ssh接続先サーバー (CentOS7)
+```
+$ sudo yum install xauth xclip
+$ sudo vi /etc/ssh/sshd_config
+X11Forwarding yes
+X11UseLocalhost no
+XauthLocation /usr/bin/xauth
+$ sudo systemctl restart sshd.service
+```
+WSL2から再接続
+```
+$ ssh -X <dest server>
+$ echo aaa | xclip
+```
+ホストPCのクリップボードに入っていればOK
