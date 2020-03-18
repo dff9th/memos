@@ -19,3 +19,22 @@ $ exec $SHELL
 $ pyenv install 3.8.2
 $ pyenv install 2.7.17
 ```
+
+## CentOS 7
+```
+$ sudo -i yum install bzip2-devel readline-devel libsqlite3x-devel libffi-devel
+$ git clone https://github.com/pyenv/pyenv.git $XDG_CACHE_HOME/pyenv
+$ git clone https://github.com/yyuu/pyenv-virtualenv.git $XDG_CACHE_HOME/pyenv/plugins/pyenv-virtualenv
+# pyenv
+if [ -d $XDG_CACHE_HOME/pyenv ]; then
+    export PYENV_ROOT="$XDG_CACHE_HOME/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - --no-rehash)"
+    if [ -d $PYENV_ROOT/plugins/pyenv-virtualenv ]; then
+        eval "$(pyenv virtualenv-init - --norehash)"
+    fi
+fi
+$ exec $SHELL
+$ pyenv install 3.8.2
+$ pyenv install 2.7.17
+```
