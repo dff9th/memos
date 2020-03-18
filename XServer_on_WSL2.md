@@ -31,6 +31,7 @@ $ xauth generate $DISPLAY
 ## ssh越しのクリップボード連携
 ssh接続先サーバー (CentOS7)
 ```
+$ sudo yum install epel-release
 $ sudo yum install xauth xclip
 $ sudo vi /etc/ssh/sshd_config
 X11Forwarding yes
