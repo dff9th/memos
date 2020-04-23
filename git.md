@@ -1,14 +1,32 @@
 # git build
 
-## バージョン
-2.25.2
+## CentOS 7
+2.26.2
+```
+$ sudo -i yum install asciidoc xmlto docbook2X docbook-utils
+$ sudo ln -s /bin/db2x_docbook2texi /bin/docbook2x-texi
+$ cd ~/tmp
+$ git clone https://github.com/git/git.git
+$ cd git
+$ git checkout v2.26.2
+$ make configure
+$ ./configure --prefix=/usr/local
+$ make all doc info
+$ sudo make install install-doc install-html install-info
+$ sudo mkdir /usr/local/share/completion
+$ sudo cp ./contrib/completion/git-completion.* /usr/local/share/completion/
+```
+参考
+- https://www.server-memo.net/memo/github/github-install.html
 
 ## Ubuntu 18.04 on WSL
+2.26.2
 ```
-$ sudo -i apt install asciidoc xmlto docbook2x
-$ curl -LO https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.25.2.tar.gz
-$ tar zxf git-2.25.2.tar.gz
-$ cd git-2.25.2
+$ sudo -i apt install asciidoc xmlto docbook2x libcurl4-openssl-dev
+$ cd ~/tmp
+$ git clone https://github.com/git/git.git
+$ cd git
+$ git checkout v2.26.2
 $ make configure
 $ ./configure --prefix=/usr/local
 $ make all doc info
