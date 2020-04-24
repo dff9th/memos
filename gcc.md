@@ -12,7 +12,7 @@ $ cd gcc-9.3.0
 $ ./contrib/download_prerequisites
 $ mkdir build
 $ cd build
-$ ../configure --enable-languages=c,c++ --prefix=/usr/local --disable-bootstrap --disable-multilib
+$ ../configure --enable-languages=c,c++ --prefix=/usr/local --disable-bootstrap
 $ make > /dev/null
 $ sudo make install > /dev/null
 $ sudo vi /etc/ld.so.conf.d/local_lib64.conf
