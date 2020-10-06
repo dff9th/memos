@@ -22,7 +22,7 @@ $ pyenv install 2.7.17
 
 ## CentOS 7
 ```
-$ sudo -i yum install bzip2-devel readline-devel libsqlite3x-devel libffi-devel
+$ sudo -i yum install bzip2-devel readline-devel libsqlite3x-devel libffi-devel zlib-devel
 $ git clone https://github.com/pyenv/pyenv.git $XDG_CACHE_HOME/pyenv
 $ git clone https://github.com/yyuu/pyenv-virtualenv.git $XDG_CACHE_HOME/pyenv/plugins/pyenv-virtualenv
 # pyenv
