@@ -1,11 +1,11 @@
 # Neovim Build
 
 ## CentOS 7
-nightly
 ```
+$ sudo -i yum -y install ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch
 $ git clone https://github.com/neovim/neovim.git
 $ cd neovim
-$ git checkout nightly
+$ git checkout stable
 $ make CMAKE_BUILD_TYPE=Release
 $ sudo make install
 ```
