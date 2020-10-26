@@ -8,6 +8,11 @@
 - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 - https://github.com/coreos/flannel
+- https://metallb.universe.tf/installation/
+- https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal
+- https://medium.com/digitalfrontiers/kubernetes-ingress-with-nginx-93bdc1ce5fa9
+- https://kubernetes.io/docs/concepts/services-networking/ingress/
+- https://github.com/kubernetes/ingress-nginx/issues/5919
 
 ### Environment
 - Machines
@@ -111,4 +116,59 @@ NAME          STATUS   ROLES    AGE   VERSION
 k8s-master1   Ready    master   29m   v1.19.3
 k8s-worker1   Ready    <none>   36s   v1.19.3
 k8s-worker2   Ready    <none>   46s   v1.19.3
+```
+
+Introduce L4 load balancer
+```
+$ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/namespace.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/metallb.yaml
+$ kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+$ kubectl get pod -n metallb-system -o wide
+NAME                         READY   STATUS    RESTARTS   AGE     IP           NODE          NOMINATED NODE   READINESS GATES
+controller-8687cdc65-dtfh4   1/1     Running   0          3m51s   10.244.2.2   k8s-worker1   <none>           <none>
+speaker-mnvm6                1/1     Running   0          3m51s   10.146.0.3   k8s-worker1   <none>           <none>
+speaker-ndn4s                1/1     Running   0          3m51s   10.146.0.2   k8s-master1   <none>           <none>
+speaker-rps7n                1/1     Running   0          3m51s   10.146.0.4   k8s-worker2   <none>           <none>
+
+$ vi metallb-l2.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 172.16.131.1-172.16.131.254
+
+$ kubectl apply -f metallb-l2.yaml
+```
+
+Deploy ingress-nginx as an ingress controller
+```
+$ curl -L https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/baremetal/deploy.yaml -o ingress-nginx-controller.yaml
+$ sed -ie 's/NodePort/LoadBalancer/g' ingress-nginx-controller.yaml
+$ kubectl apply -f ingress-nginx-controller.yaml
+
+$ kubectl get pod,svc -n ingress-nginx
+NAME                                            READY   STATUS      RESTARTS   AGE
+pod/ingress-nginx-admission-create-p4cgl        0/1     Completed   0          6m18s
+pod/ingress-nginx-admission-patch-jhph7         0/1     Completed   0          6m18s
+pod/ingress-nginx-controller-785557f9c9-sks9w   1/1     Running     0          6m19s
+
+NAME                                         TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)                      AGE
+service/ingress-nginx-controller             LoadBalancer   10.109.167.168   172.16.131.1   80:30343/TCP,443:32491/TCP   6m19s
+service/ingress-nginx-controller-admission   ClusterIP      10.101.40.189    <none>         443/TCP                      6m19s
+
+$ curl 172.16.131.1
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
 ```
