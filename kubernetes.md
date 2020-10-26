@@ -118,7 +118,93 @@ k8s-worker1   Ready    <none>   36s   v1.19.3
 k8s-worker2   Ready    <none>   46s   v1.19.3
 ```
 
-Introduce L4 load balancer
+#### k8s-master (In case over WAN access)
+Deploy ingress-nginx with NodePort as an ingress controller
+```
+$ curl -L https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/baremetal/deploy.yaml -o ingress-nginx-controller.yaml
+$ kubectl apply -f ingress-nginx-controller.yaml
+
+$ kubectl get pod,svc -n ingress-nginx
+NAME                                            READY   STATUS      RESTARTS   AGE
+pod/ingress-nginx-admission-create-js4xf        0/1     Completed   0          26s
+pod/ingress-nginx-admission-patch-llbpb         0/1     Completed   1          26s
+pod/ingress-nginx-controller-785557f9c9-4hlll   0/1     Running     0          26s
+
+NAME                                         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+service/ingress-nginx-controller             NodePort    10.109.153.126   <none>        80:31583/TCP,443:32408/TCP   26s
+service/ingress-nginx-controller-admission   ClusterIP   10.106.19.220    <none>        443/TCP                      26s
+
+$ curl localhost:31583
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+```
+
+Deploy sample service
+```
+$ vi httpd-svc.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpd
+  labels:
+    app: httpd
+spec:
+  containers:
+  - name: httpd
+    image: httpd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30080
+  selector:
+    app: httpd
+
+$ kubectl apply -f httpd-svc.yaml
+```
+
+Deploy sample ingress resource
+```
+$ vi httpd-ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpd-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /index
+        pathType: Exact
+        backend:
+          service:
+            name: httpd-svc
+            port:
+              number: 80
+
+$ kubectl apply -f httpd-ingress.yaml
+$ curl localhost:31583/index
+<html><body><h1>It works!</h1></body></html>
+```
+
+
+### Etc
+
+#### k8s-master (In case over only LAN access)
+Deploy metallb as a L4 load balancer in LAN
 ```
 $ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/namespace.yaml
 $ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/metallb.yaml
