@@ -176,7 +176,6 @@ $ kubectl apply -f httpd-svc.yaml
 Deploy sample ingress resource
 ```
 $ vi httpd-ingress.yaml
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -258,3 +257,54 @@ $ curl 172.16.131.1
 </body>
 </html>
 ```
+
+
+### Issues
+
+#### Failed to deploy ingress resource (in kubernetes 1.18.0)
+```bash
+$ vi httpd-ingress.yaml
+#apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: httpd-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /index
+        pathType: Exact
+        backend:
+          serviceName: "httpd-svc"
+          servicePort: 80
+
+$ kubectl apply -f httpd-ingress.yaml
+Error from server (InternalError): error when creating "httpd-ingress.yaml": Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post https://ingress-nginx-controller-admission.ingress-nginx.svc:443/networking/v1beta1/ingresses?timeout=10s: context deadline exceeded
+```
+
+Solve
+```bash
+$ kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+$ kubectl apply -f httpd-ingress.yaml
+ingress.networking.k8s.io/httpd-ingress created
+
+$ kubectl get pod,svc -n ingress-nginx
+NAME                                            READY   STATUS      RESTARTS   AGE
+pod/ingress-nginx-admission-create-njc9k        0/1     Completed   0          61m
+pod/ingress-nginx-admission-patch-gbfz7         0/1     Completed   0          61m
+pod/ingress-nginx-controller-56bbf6d6b7-mfv77   1/1     Running     0          61m
+
+NAME                                         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+service/ingress-nginx-controller             NodePort    10.1.148.187   <none>        80:31251/TCP,443:32023/TCP   61m
+service/ingress-nginx-controller-admission   ClusterIP   10.1.48.162    <none>        443/TCP                      61m
+
+$ curl 172.16.12.10:31251/index
+<html><body><h1>It works!</h1></body></html>
+```
+
+References:
+- https://github.com/kubernetes/ingress-nginx/issues/5401
+- https://stackoverflow.com/questions/61365202/nginx-ingress-service-ingress-nginx-controller-admission-not-found
