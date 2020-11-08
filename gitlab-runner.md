@@ -13,10 +13,12 @@ $ sudo mkdir /etc/gitlab-runner/certs
 $ sudo cp <GitLabの自己証明書> /etc/gitlab-runner/certs/
 ```
 
+
 ## Register
 ```bash
 $ sudo gitlab-runner register
 ```
+
 
 ## Config
 Docker outside of Docker用設定 [参考](https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding)
@@ -44,4 +46,10 @@ $ sudo vi /etc/gitlab-runner/config.toml
     extra_hosts = ["gitlab.gcp.local:10.146.0.5"]
 
 $ sudo systemctl restart gitlab-runner
+```
+
+
+## プライベートDockerレジストリの設定 (kubernetes master)
+```bash
+$ kubectl create secret docker-registry gitlab-gcp-local-registry --docker-server=gitlab.gcp.local:5050 --docker-username=<username> --docker-password=<password>
 ```
