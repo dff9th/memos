@@ -5,7 +5,7 @@ https://christina04.hatenablog.com/entry/ssl-tls-flow
 
 
 ## 用語
-- 証明書（.pem）
+- 証明書（.crt）
 - 証明書要求（.csr）
 - 署名
 
