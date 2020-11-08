@@ -53,3 +53,4 @@ $ sudo systemctl restart gitlab-runner
 ```bash
 $ kubectl create secret docker-registry gitlab-gcp-local-registry --docker-server=gitlab.gcp.local:5050 --docker-username=<username> --docker-password=<password>
 ```
+[参考](https://docs.gitlab.com/ee/user/project/clusters/#deployment-variables)
