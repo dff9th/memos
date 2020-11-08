@@ -35,19 +35,20 @@ $ curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/scr
 $ sudo EXTERNAL_URL="https://gitlab.gcp.local" yum install -y gitlab-ce
 ```
 
-HTTPS接続用の証明書確認
-```bash
-$ ls /etc/gitlab/ssl/ -la
-合計 12
-drwxr-xr-x. 2 root root   98 11月  6 11:29 .
-drwxrwxr-x. 4 root root   82 11月  8 02:36 ..
--rw-r--r--. 1 root root 1058 11月  6 11:29 gitlab.gcp.local.crt
--r--------. 1 root root 1675 11月  6 11:29 gitlab.gcp.local.key
--r--------. 1 root root 1679 11月  6 11:29 gitlab.gcp.local.key-staging
+
+## 自己ルート認証局によって署名されたサーバ証明書の作成・登録
+作成は略（ssl-tls.mdを参照）
+
+登録
+```
+$ sudo cp <証明書> <秘密鍵> /etc/gitlab/ssl/
+$ sudo gitlab-ctl restart
 ```
 
-証明書（.crt）取得およびChromeにインポート（クライアント環境）
 
-DNSにドメイン (gitlab.gcp.local) を追加（クライアント環境）
+## クライアント環境のサーバ認証設定
+自己ルート証明書をChromeにインポート
+
+DNSにドメイン (gitlab.gcp.local) を追加
 
 Chromeで<https://gitlab.gcp.local>にアクセスし，パスワード設定およびrootユーザでログイン
