@@ -50,7 +50,7 @@ $ sudo systemctl restart gitlab-runner
 
 
 ## プライベートDockerレジストリの設定 (kubernetes master)
-GitLabページのSettings > Deploy Tokensでgitlab-deploy-tokenを全権限で作成
+GitLabページのSettings > CI/CD > Deploy Tokensでgitlab-deploy-tokenを全権限で作成
 
 .gitlab-ci.yamlで以下を含める
 ```yaml
