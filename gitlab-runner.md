@@ -55,6 +55,6 @@ GitLabページのSettings > CI/CD > Deploy Tokensでgitlab-deploy-tokenを全�
 .gitlab-ci.yamlで以下を含める
 ```yaml
   before_script:
-    - kubectl create secret docker-registry gitlab-gcp-local-registry --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl apply -f -
+    - kubectl create secret docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl apply -f -
 ```
 [参考](https://docs.gitlab.com/ee/user/project/clusters/#deployment-variables)
