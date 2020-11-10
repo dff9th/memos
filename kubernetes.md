@@ -91,7 +91,7 @@ $ sudo systemctl enable --now kubelet
 #### k8s-master
 Create a cluster with kubeadm
 ```bash
-$ sudo kubeadm init --apiserver-advertise-address 10.146.0.2 --pod-network-cidr 10.244.0.0/16
+$ sudo kubeadm init --apiserver-advertise-address 10.146.0.2 --pod-network-cidr 10.244.0.0/16 --service-cidr 10.96.0.0/12
 $ mkdir ~/.kube
 $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
