@@ -236,6 +236,20 @@ Deploy ingress-nginx as an ingress controller
 ```
 $ curl -L https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/baremetal/deploy.yaml -o ingress-nginx-controller.yaml
 $ sed -ie 's/NodePort/LoadBalancer/g' ingress-nginx-controller.yaml
+$ vi ingress-nginx-controller.yaml
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+      nodePort: 30080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+      nodePort: 30443
+
 $ kubectl apply -f ingress-nginx-controller.yaml
 
 $ kubectl get pod,svc -n ingress-nginx
@@ -245,7 +259,7 @@ pod/ingress-nginx-admission-patch-jhph7         0/1     Completed   0          6
 pod/ingress-nginx-controller-785557f9c9-sks9w   1/1     Running     0          6m19s
 
 NAME                                         TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)                      AGE
-service/ingress-nginx-controller             LoadBalancer   10.109.167.168   172.16.131.1   80:30343/TCP,443:32491/TCP   6m19s
+service/ingress-nginx-controller             LoadBalancer   10.109.167.168   172.16.131.1   80:30080/TCP,443:30443/TCP   6m19s
 service/ingress-nginx-controller-admission   ClusterIP      10.101.40.189    <none>         443/TCP                      6m19s
 
 $ curl 172.16.131.1
