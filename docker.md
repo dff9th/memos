@@ -2,7 +2,7 @@
 
 ## Linux kernel update
 ```
-$ sudo -i yum update
+$ sudo -i yum update -y
 ```
 
 ## Install from the official repository

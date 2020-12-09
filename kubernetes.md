@@ -38,6 +38,11 @@
 ### Procedure
 
 #### all
+Update kernel
+```bash
+$ sudo -i yum update -y
+```
+
 Network settings
 ```bash
 $ sudo systemctl disable --now firewalld
@@ -69,6 +74,35 @@ $ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 $ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 $ sudo yum install -y docker-ce docker-ce-cli containerd.io
 $ sudo systemctl enable --now docker
+```
+
+Setup docker proxy
+```bash
+$ sudo mkdir /etc/systemd/system/docker.service.d
+$ sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+Environment="HTTP_PROXY=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="HTTPS_PROXY=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="FTP_PROXY=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="http_proxy=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="https_proxy=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="ftp_proxy=http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+Environment="NO_PROXY=localhost,127.0.0.1"
+
+$ sudo mkdir /root/.docker/config.json
+$ sudo vi /root/.docker/config.json
+{
+  "proxies": {
+    "default": {
+      "httpProxy": "http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]",
+      "httpsProxy": "http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]",
+      "ftpProxy": "http://[proxyuser]:[proxypass]@[proxyurl]:[proxyport]"
+    }
+  }
+}
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart docker.service
 ```
 
 Install kubeadm, kubelet, and kubectl
