@@ -70,9 +70,9 @@ $ sudo sysctl --system
 
 Install docker
 ```bash
-$ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-$ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-$ sudo yum install -y docker-ce docker-ce-cli containerd.io
+$ sudo -i yum install -y yum-utils device-mapper-persistent-data lvm2
+$ sudo -i yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+$ sudo -i yum install -y docker-ce docker-ce-cli containerd.io
 $ sudo systemctl enable --now docker
 ```
 
@@ -155,7 +155,21 @@ k8s-worker2   Ready    <none>   46s   v1.19.3
 #### k8s-master (In case over WAN access)
 Deploy ingress-nginx with NodePort as an ingress controller
 ```
-$ curl -L https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/baremetal/deploy.yaml -o ingress-nginx-controller.yaml
+$ curl -L https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.2/deploy/static/provider/baremetal/deploy.yaml -o ingress-nginx-controller.yaml
+$ vi ingress-nginx-controller.yaml
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      nodePort: 30080 <- insert
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      nodePort: 30443 <- insert
+      protocol: TCP
+      targetPort: https
+
 $ kubectl apply -f ingress-nginx-controller.yaml
 
 $ kubectl get pod,svc -n ingress-nginx
@@ -165,10 +179,10 @@ pod/ingress-nginx-admission-patch-llbpb         0/1     Completed   1          2
 pod/ingress-nginx-controller-785557f9c9-4hlll   0/1     Running     0          26s
 
 NAME                                         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-service/ingress-nginx-controller             NodePort    10.109.153.126   <none>        80:31583/TCP,443:32408/TCP   26s
+service/ingress-nginx-controller             NodePort    10.109.153.126   <none>        80:30080/TCP,443:30443/TCP   26s
 service/ingress-nginx-controller-admission   ClusterIP   10.106.19.220    <none>        443/TCP                      26s
 
-$ curl localhost:31583
+$ curl localhost:30080
 <html>
 <head><title>404 Not Found</title></head>
 <body>
