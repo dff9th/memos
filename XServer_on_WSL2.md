@@ -18,7 +18,7 @@
 xeyesで疎通確認 (実行時に目玉のGUIソフトが立ち上がればOK)
 ```
 $ sudo apt install x11-apps
-$ echo $(netsh.exe interface ip show addresses "vEthernet (WSL)" | grep "IP Address:" | awk 'BEGIN{RS="\r\n"}{print $3}'
+$ echo $(netsh.exe interface ip show addresses "vEthernet (WSL)" | grep "IP Address:" | awk 'BEGIN{RS="\r\n"}{print $3}')
 172.29.48.1
 $ export DISPLAY=172.29.48.1:0.0
 $ xeyes
