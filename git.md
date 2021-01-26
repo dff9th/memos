@@ -19,14 +19,14 @@ $ sudo cp ./contrib/completion/git-completion.* /usr/local/share/completion/
 参考
 - https://www.server-memo.net/memo/github/github-install.html
 
-## Ubuntu 18.04 on WSL
-2.26.2
+## Ubuntu 20.04 on WSL
+2.30.0
 ```
 $ sudo -i apt install asciidoc xmlto docbook2x libcurl4-openssl-dev
 $ cd ~/tmp
 $ git clone https://github.com/git/git.git
 $ cd git
-$ git checkout v2.26.2
+$ git checkout v2.30.0
 $ make configure
 $ ./configure --prefix=/usr/local
 $ make all doc info
